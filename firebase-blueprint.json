@@ -1,0 +1,67 @@
+{
+  "entities": {
+    "AgentProfile": {
+      "title": "AgentProfile",
+      "description": "Configuration for an AI agent.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "voice": { "type": "string" },
+        "knowledgeBase": { "type": "string" },
+        "chatKnowledgeBase": { "type": "string" },
+        "initialGreeting": { "type": "string" },
+        "initialGreetingText": { "type": "string" },
+        "theme": { "type": "string" },
+        "accentColor": { "type": "string" },
+        "calloutMessage": { "type": "string" },
+        "logoUrl": { "type": "string" },
+        "avatar1Url": { "type": "string" },
+        "avatar2Url": { "type": "string" },
+        "maxLodgeCapacity": { "type": "number", "description": "Maximum beds in the lodge, default 52" },
+        "emailConfig": {
+          "type": "object",
+          "properties": {
+            "formspreeEndpoint": { "type": "string" }
+          }
+        },
+        "fileUploadConfig": {
+          "type": "object",
+          "properties": {
+            "cloudinaryCloudName": { "type": "string" },
+            "cloudinaryUploadPreset": { "type": "string" }
+          }
+        },
+        "ownerId": { "type": "string" }
+      },
+      "required": ["id", "name", "ownerId"]
+    },
+    "Booking": {
+      "title": "Booking",
+      "description": "A facility booking at PSSDC.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userName": { "type": "string" },
+        "userPhone": { "type": "string", "description": "11-digit phone number" },
+        "bookingDate": { "type": "string", "description": "YYYY-MM-DD" },
+        "purpose": { "type": "string" },
+        "facility": { "type": "string", "enum": ["Guest Lodge", "Hospital Appointment"] },
+        "status": { "type": "string", "enum": ["Pending", "Confirmed", "Rejected"] },
+        "agentId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "userName", "userPhone", "bookingDate", "agentId", "status"]
+    }
+  },
+  "firestore": {
+    "/agents/{agentId}": {
+      "schema": { "$ref": "#/entities/AgentProfile" },
+      "description": "Agent profiles."
+    },
+    "/bookings/{bookingId}": {
+      "schema": { "$ref": "#/entities/Booking" },
+      "description": "Stores all facility bookings."
+    }
+  }
+}

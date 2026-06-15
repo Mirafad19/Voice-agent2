@@ -1,0 +1,108 @@
+import React, { useState, useMemo } from "react";
+import { Modal } from "./ui/Modal";
+import { Button } from "./ui/Button";
+import { AgentProfile, AgentConfig } from "../types";
+import { safeBtoa } from "../utils";
+import { useLocalStorage } from "../hooks/useLocalStorage";
+
+interface EmbedCodeModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  agentProfile: AgentProfile | null;
+}
+
+export const EmbedCodeModal: React.FC<EmbedCodeModalProps> = ({
+  isOpen,
+  onClose,
+  agentProfile,
+}) => {
+  const [publicUrl, setPublicUrl] = useLocalStorage<string>(
+    "publicHostingUrl",
+    "",
+  );
+  const [copiedCode, setCopiedCode] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
+
+  const { embedCode, directLink } = useMemo(() => {
+    if (!agentProfile) return { embedCode: "", directLink: "" };
+
+    const baseUrl = (publicUrl || "YOUR_HOSTED_URL").replace(/\/$/, "");
+    const finalUrl = `${baseUrl}?config=${agentProfile.id}`;
+
+    const code = `<script 
+  src="${baseUrl}/embed.js" 
+  data-config="${agentProfile.id}" 
+  data-base-url="${baseUrl}"
+  defer
+></script>`;
+
+    return { embedCode: code, directLink: finalUrl };
+  }, [agentProfile, publicUrl]);
+
+  const handleCopyCode = () => {
+    navigator.clipboard.writeText(embedCode);
+    setCopiedCode(true);
+    setTimeout(() => setCopiedCode(false), 2000);
+  };
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(directLink);
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 2000);
+  };
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} title="Get Code">
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-2">
+          <label className="text-xs font-bold uppercase text-gray-500 dark:text-gray-400">
+            Hosting URL (Required)
+          </label>
+          <input
+            type="url"
+            value={publicUrl}
+            onChange={(e) => setPublicUrl(e.target.value)}
+            placeholder="https://your-app.vercel.app"
+            className="w-full p-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+          />
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <div className="flex justify-between items-center">
+            <label className="text-xs font-bold uppercase text-gray-500 dark:text-gray-400">
+              Embed Code
+            </label>
+            <Button onClick={handleCopyCode} className="py-1 px-3 text-xs h-8">
+              {copiedCode ? "Copied!" : "Copy Code"}
+            </Button>
+          </div>
+          <div className="relative">
+            <pre className="h-64 w-full p-4 bg-gray-950 text-green-400 font-mono text-xs rounded-lg overflow-y-auto border border-gray-800 shadow-inner">
+              {embedCode}
+            </pre>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2 pt-4 border-t border-gray-200 dark:border-gray-700">
+          <label className="text-xs font-bold uppercase text-gray-500 dark:text-gray-400">
+            Direct Link
+          </label>
+          <div className="flex gap-2">
+            <input
+              readOnly
+              value={directLink}
+              className="flex-1 p-2 text-xs bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded text-gray-600 dark:text-gray-300 select-all"
+            />
+            <Button
+              onClick={handleCopyLink}
+              variant="secondary"
+              className="py-1 px-3 text-xs whitespace-nowrap h-9"
+            >
+              {copiedLink ? "Copied!" : "Copy Link"}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </Modal>
+  );
+};

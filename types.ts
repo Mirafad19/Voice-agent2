@@ -1,0 +1,121 @@
+
+export enum WidgetTheme {
+  Light = 'light',
+  Dark = 'dark',
+}
+
+export enum AgentVoice {
+  Zephyr = 'Zephyr',
+  Puck = 'Puck',
+  Charon = 'Charon',
+  Kore = 'Kore',
+  Fenrir = 'Fenrir',
+  Aoede = 'Aoede',
+  Callirrhoe = 'Callirrhoe',
+  Autonoe = 'Autonoe',
+  Enceladus = 'Enceladus',
+  Iapetus = 'Iapetus',
+  Sol = 'Sol',
+  Algieba = 'Algieba',
+  Despina = 'Despina',
+  Erinome = 'Erinome',
+  Algenib = 'Algenib',
+  Rasalgethi = 'Rasalgethi',
+  Laomedeia = 'Laomedeia',
+  Achernar = 'Achernar',
+  Alnilam = 'Alnilam',
+  Schedar = 'Schedar',
+  Gacrux = 'Gacrux',
+  Pulcherrima = 'Pulcherrima',
+  Achird = 'Achird',
+  Zubenelgenubi = 'Zubenelgenubi',
+  Vindemiatrix = 'Vindemiatrix',
+  Sadachbia = 'Sadachbia',
+  Sadaltager = 'Sadaltager',
+  Sulafat = 'Sulafat',
+}
+
+export enum AccentColor {
+  Red = 'red',
+  Orange = 'orange',
+  Gold = 'gold',
+  Cyan = 'cyan',
+  Pink = 'pink',
+  Lime = 'lime',
+  Violet = 'violet',
+  Teal = 'teal',
+  Emerald = 'emerald',
+  Sky = 'sky',
+  Rose = 'rose',
+  Black = 'black',
+}
+
+export interface EmailConfig {
+  formspreeEndpoint?: string;
+}
+
+export interface FileUploadConfig {
+  cloudinaryCloudName: string;
+  cloudinaryUploadPreset: string;
+}
+
+export interface Booking {
+  id: string;
+  userName: string;
+  userPhone: string;
+  bookingDate: string; // YYYY-MM-DD
+  purpose: string;
+  facility: 'Guest Lodge' | 'Hospital Appointment';
+  status: 'Pending' | 'Confirmed' | 'Rejected';
+  agentId: string;
+  createdAt: any;
+  updatedAt?: any; // Action time
+}
+
+export interface AgentProfile {
+  id: string;
+  name: string;
+  knowledgeBase: string; 
+  initialGreeting?: string; 
+  chatKnowledgeBase?: string; 
+  initialGreetingText?: string; 
+  pidginGreeting?: string;
+  nigerianEnglishGreeting?: string;
+  theme: WidgetTheme;
+  voice: AgentVoice;
+  accentColor: AccentColor;
+  calloutMessage?: string;
+  logoUrl?: string;
+  avatar1Url?: string;
+  avatar2Url?: string;
+  maxLodgeCapacity?: number;
+  emailConfig?: EmailConfig;
+  fileUploadConfig?: FileUploadConfig;
+  ownerId?: string;
+}
+
+export type AgentConfig = Omit<AgentProfile, 'id'>;
+
+export interface Recording {
+  id:string;
+  name: string;
+  blob: Blob;
+  url: string;
+  mimeType: string;
+  transcript?: string; 
+  summary?: string;
+  sentiment?: 'Positive' | 'Neutral' | 'Negative' | string;
+  actionItems?: string[];
+  isAnalyzing?: boolean;
+}
+
+export enum WidgetState {
+  Idle = 'idle',
+  Connecting = 'connecting',
+  Listening = 'listening',
+  Speaking = 'speaking',
+  Error = 'error',
+  Ended = 'ended',
+}
+
+export type ReportingStatus = 'idle' | 'analyzing' | 'sending' | 'sent' | 'failed';
